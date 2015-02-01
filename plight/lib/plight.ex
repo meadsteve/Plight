@@ -7,12 +7,10 @@ defmodule Plight do
     control_port = 9092
 
     mock_routes = Plight.MockRoutes.start
-    |> Plight.MockRoutes.add("/index.html", {200, "this is the mocked index"}, remove_in_minutes: 1)
-    |> Plight.MockRoutes.add("/foo", {200, "bar"})
 
     assert_dispatch = :cowboy_router.compile([
       {:_, [
-        {"/mock/[...]", Plight.Handlers.MockControlHandler, []},
+        {"/mock/:method/[...]", Plight.Handlers.MockControlHandler, mock_routes},
         {"/assert/[...]", Plight.Handlers.AssertHandler, []}
         ]
       }

@@ -4,11 +4,14 @@ defmodule Plight.Handlers.MockHandler do
   end
 
   def handle(req, mock_handler) do
-    IO.inspect mock_handler
     {mock_path, _} = :cowboy_req.path(req)
-    IO.puts "Looking up mock for path: #{mock_path}"
+    {mock_method, _} = :cowboy_req.method(req)
 
-    {response_code, response_message} = mock_handler |> Plight.MockRoutes.lookup mock_path
+    mock_id = "#{mock_method |> String.upcase}:#{mock_path}"
+
+    IO.puts "Looking up mock for --> #{mock_id}"
+
+    {response_code, response_message} = mock_handler |> Plight.MockRoutes.lookup mock_id
 
     {:ok, req} = :cowboy_req.reply(response_code, [], response_message, req)
     {:ok, req, mock_handler}
