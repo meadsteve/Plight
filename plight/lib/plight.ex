@@ -20,14 +20,15 @@ defmodule Plight do
       {:_, [{"/[...]", Plight.Handlers.MockHandler, @mock_route_list}]}
     ])
 
-    {:ok, _} = :cowboy.start_http(:http_control, 100, [port: control_port], [env: [dispatch: assert_dispatch]])
+    cowboy_http_servers = [
+      [:http_control, 100, [port: control_port], [env: [dispatch: assert_dispatch]]],
+      [:http_mock, 100, [port: mock_port], [env: [dispatch: mock_dispatch]]]
+    ]
+
     IO.puts "Asserting and control running at http://localhost:#{control_port}"
-
-
-    {:ok, _} = :cowboy.start_http(:http_mock, 100, [port: mock_port], [env: [dispatch: mock_dispatch]])
     IO.puts "Mocking running at http://localhost:#{mock_port}"
 
-    Plight.Supervisor.start_link
-    
+    Plight.Supervisor.start_link http_servers: cowboy_http_servers
+
   end
 end
