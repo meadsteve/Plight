@@ -4,7 +4,7 @@ defmodule Plight.Handlers.MockHandler do
   end
 
   def handle(req, state) do
-    {:ok, req} = :cowboy_req.reply(200, [], "hello world", req)
+    {:ok, req} = :cowboy_req.reply(200, [], "hello world from controller", req)
     {:ok, req, state}
   end
 
