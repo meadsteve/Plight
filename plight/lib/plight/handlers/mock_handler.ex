@@ -1,10 +1,12 @@
 defmodule Plight.Handlers.MockHandler do
-  def init(_transport, req, []) do
-    {:ok, req, nil}
+  def init(_transport, req, state) do
+    {:ok, req, state}
   end
 
   def handle(req, state) do
-    {:ok, req} = :cowboy_req.reply(200, [], "hello world being mocked", req)
+    {mock_path, _} = :cowboy_req.path(req)
+    IO.puts "Serving mocked path: #{mock_path}"
+    {:ok, req} = :cowboy_req.reply(200, [], "hello world from #{mock_path}", req)
     {:ok, req, state}
   end
 
