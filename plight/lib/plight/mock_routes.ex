@@ -1,8 +1,7 @@
 defmodule Plight.MockRoutes do
 
-  def start(opts \\ []) do
-    {:ok, pid} = GenServer.start_link(Plight.Mocks.RouteServer, :ok, opts)
-    pid
+  def start_link(opts \\ []) do
+    GenServer.start_link(Plight.Mocks.RouteServer, :ok, opts)
   end
 
   def add(server, route, response) do
