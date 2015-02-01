@@ -10,7 +10,7 @@ defmodule Plight do
 
     assert_dispatch = :cowboy_router.compile([
       {:_, [
-        {"/mock/:method/[...]", Plight.Handlers.MockControlHandler, mock_routes},
+        {"/mock/:method/:code/[...]", Plight.Handlers.MockControlHandler, mock_routes},
         {"/assert/[...]", Plight.Handlers.AssertHandler, []}
         ]
       }
