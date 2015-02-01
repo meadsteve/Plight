@@ -6,13 +6,15 @@ defmodule Plight do
     mock_port = 9091
     control_port = 9092
 
+    mock_routes = Plight.MockRoutes.start
+
     assert_dispatch = :cowboy_router.compile([
       {:_, [{"/mock/[...]", Plight.Handlers.MockControlHandler, []}]},
       {:_, [{"/assert/[...]", Plight.Handlers.AssertHandler, []}]}
     ])
 
     mock_dispatch = :cowboy_router.compile([
-      {:_, [{"/[...]", Plight.Handlers.MockHandler, []}]}
+      {:_, [{"/[...]", Plight.Handlers.MockHandler, mock_routes}]}
     ])
 
     {:ok, _} = :cowboy.start_http(:http_control, 100, [port: control_port], [env: [dispatch: assert_dispatch]])
