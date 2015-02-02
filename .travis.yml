@@ -11,4 +11,4 @@ before_script: "export PATH=`pwd`/elixir/bin:$PATH"
 script:
 - mix local.hex --force
 - cd plight
-- MIX_ENV=test mix do deps.get, test
+- MIX_ENV=test mix do deps.get, test --no-start
