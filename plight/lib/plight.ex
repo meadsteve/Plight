@@ -20,6 +20,7 @@ defmodule Plight do
       {:_, [{"/[...]", Plight.Handlers.MockHandler, @mock_route_list}]}
     ])
 
+    # Everything here will be called with :cowboy.start_http and supverised
     cowboy_http_servers = [
       [:http_control, 100, [port: control_port], [env: [dispatch: assert_dispatch]]],
       [:http_mock, 100, [port: mock_port], [env: [dispatch: mock_dispatch]]]

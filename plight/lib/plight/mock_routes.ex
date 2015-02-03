@@ -10,14 +10,18 @@ defmodule Plight.MockRoutes do
   end
 
   def add(server, route, response, [remove_in_minutes: timeout]) do
-    add(server, route, response, [remove_in_seconds: timeout * 60])
+    add(server, route, response, [remove_in_micros: timeout * 60 * 1000])
   end
 
   def add(server, route, response, [remove_in_seconds: timeout]) do
+    add(server, route, response, [remove_in_micros: timeout * 1000])
+  end
+
+  def add(server, route, response, [remove_in_micros: timeout]) do
     GenServer.cast(server, {:add, route, response})
     spawn fn ->
       IO.puts "Queing route #{route} for removal in #{timeout} seconds"
-      :timer.sleep(1000 * timeout)
+      :timer.sleep(timeout)
       IO.puts "removing route #{route} as timeout has expired"
       Plight.MockRoutes.remove(server, route)
     end
@@ -33,4 +37,7 @@ defmodule Plight.MockRoutes do
     GenServer.call(server, {:lookup, route})
   end
 
+  def has_route?(server, route) do
+    GenServer.call(server, {:has_route, route})
+  end
 end
