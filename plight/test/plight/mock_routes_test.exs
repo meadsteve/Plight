@@ -28,7 +28,7 @@ defmodule Plight.MockRoutesTest do
     Plight.MockRoutes.add(routes, test_route, {200, "ok"}, remove_in_micros: 10)
     assert Plight.MockRoutes.has_route?(routes, test_route) == true
 
-    :timer.sleep(12)
+    :timer.sleep(20)
     assert Plight.MockRoutes.has_route?(routes, test_route) == false
   end
 

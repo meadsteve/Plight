@@ -27,7 +27,7 @@ defmodule Plight.Mocks.RouteServer do
   def handle_cast({:add, route, response, :remove_in_micros, timeout}, routes) do
     server = self
     spawn_link fn ->
-      IO.puts "Queing route #{route} for removal in #{timeout} seconds"
+      IO.puts "Queing route #{route} for removal in #{timeout} microseconds"
       :timer.sleep(timeout)
       IO.puts "removing route #{route} as timeout has expired"
       send server, {self, :remove, route}
