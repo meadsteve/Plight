@@ -20,16 +20,47 @@ defmodule Plight.Mocks.RouteServer do
   end
 
   def handle_cast({:add, route, response}, routes) do
-    {:noreply, routes |> HashDict.put(route, response)}
+    {:noreply, add_route(routes, route, response)}
+  end
+
+  def handle_cast({:add, route, response, :remove_in_micros, timeout}, routes) do
+    server = self
+    spawn fn ->
+      IO.puts "Queing route #{route} for removal in #{timeout} seconds"
+      :timer.sleep(timeout)
+      IO.puts "removing route #{route} as timeout has expired"
+      send server, {self, :remove, route}
+    end
+    {:noreply, add_route(routes, route, response)}
   end
 
   def handle_cast({:remove, route}, routes) do
-    {_response, updated_routes} = routes |> HashDict.pop(route)
-    {:noreply, updated_routes}
+    {:noreply, routes |> remove_route route}
   end
+
+  def handle_info({_pid, :remove, route}, routes) do
+    {:noreply, routes |> remove_route route}
+  end
+
+  def handle_info(msg, state) do
+    IO.puts "unknown message recieved by route_server"
+    IO.inspect msg
+    {:noreply, state}
+  end
+
+  # Domain logic
 
   defp has_route?(routes, route) do
     routes |> HashDict.has_key? route
+  end
+
+  defp add_route(routes, route, response) do
+    routes |> HashDict.put(route, response)
+  end
+
+  defp remove_route(routes, route) do
+    {_response, updated_routes} = HashDict.pop(routes, route)
+    updated_routes
   end
 
 end
