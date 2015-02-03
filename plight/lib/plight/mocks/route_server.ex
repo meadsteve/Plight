@@ -3,6 +3,7 @@ defmodule Plight.Mocks.RouteServer do
 
   ## Gen server hooks
   def init(:ok) do
+    :erlang.process_flag(:trap_exit, true)
     {:ok, HashDict.new}
   end
 
@@ -25,7 +26,7 @@ defmodule Plight.Mocks.RouteServer do
 
   def handle_cast({:add, route, response, :remove_in_micros, timeout}, routes) do
     server = self
-    spawn fn ->
+    spawn_link fn ->
       IO.puts "Queing route #{route} for removal in #{timeout} seconds"
       :timer.sleep(timeout)
       IO.puts "removing route #{route} as timeout has expired"
@@ -38,14 +39,24 @@ defmodule Plight.Mocks.RouteServer do
     {:noreply, routes |> remove_route route}
   end
 
+  # messages
+
   def handle_info({_pid, :remove, route}, routes) do
     {:noreply, routes |> remove_route route}
   end
 
-  def handle_info(msg, state) do
+  def handle_info({:EXIT, _pid, why}, routes) when why == :normal do
+    {:noreply, routes}
+  end
+  def handle_info({:EXIT, _pid, why}, routes) do
+    IO.puts "Sleep process terminated unexpectedly because #{why}"
+    {:noreply, routes}
+  end
+
+  def handle_info(msg, routes) do
     IO.puts "unknown message recieved by route_server"
     IO.inspect msg
-    {:noreply, state}
+    {:noreply, routes}
   end
 
   # Domain logic
