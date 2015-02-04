@@ -2,6 +2,7 @@ defmodule Plight do
   use Application
 
   @mock_route_list Plight.MockRoutes
+  @called_path_tracker Plight.CallTracker
 
   def start(_type, _args) do
 
@@ -17,7 +18,7 @@ defmodule Plight do
     ])
 
     mock_dispatch = :cowboy_router.compile([
-      {:_, [{"/[...]", Plight.Handlers.MockHandler, @mock_route_list}]}
+      {:_, [{"/[...]", Plight.Handlers.MockHandler, {@mock_route_list, @called_path_tracker}}]}
     ])
 
     # Everything here will be called with :cowboy.start_http and supverised

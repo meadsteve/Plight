@@ -2,6 +2,7 @@ defmodule Plight.Supervisor do
   use Supervisor
 
   @mock_route_list Plight.MockRoutes
+  @called_path_tracker Plight.CallTracker
 
   def start_link (opts \\ []) do
     :supervisor.start_link(__MODULE__, opts)
@@ -19,7 +20,8 @@ defmodule Plight.Supervisor do
 
   defp get_default_children() do
     [
-      worker(Plight.MockRoutes, [[name: @mock_route_list]])
+      worker(Plight.MockRoutes, [[name: @mock_route_list]]),
+      worker(Plight.CallTracker, [[name: @called_path_tracker]])
     ]
   end
 
