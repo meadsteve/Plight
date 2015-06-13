@@ -4,4 +4,5 @@ elixir:
 otp_release:
 - 17.0
 script:
+- cd plight
 - MIX_ENV=test mix do deps.get, test --no-start
